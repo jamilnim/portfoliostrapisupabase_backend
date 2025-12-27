@@ -1,12 +1,9 @@
 module.exports = ({ env }) => ({
-    // Upload plugin
     upload: {
       config: {
-        provider: "supabase",
+        provider: 'local', // use local storage
         providerOptions: {
-          url: env("SUPABASE_URL"),
-          key: env("SUPABASE_SERVICE_ROLE_KEY"),
-          bucket: env("SUPABASE_BUCKET", "uploads"),
+          sizeLimit: 10000000, // optional: 10MB max file size
         },
       },
     },
