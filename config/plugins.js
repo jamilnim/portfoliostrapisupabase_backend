@@ -1,7 +1,7 @@
 module.exports = ({ env }) => ({
     upload: {
       config: {
-        provider: 'custom',
+        provider: 'local',
         providerOptions: {
           path: './src/providers/upload/supabase.js',
         },
