@@ -26,10 +26,7 @@ module.exports = {
             upsert: true,
           });
 
-        if (error) {
-          console.error('Supabase upload error:', error);
-          throw error;
-        }
+        if (error) throw error;
 
         file.url = `${providerOptions.supabaseUrl}/storage/v1/object/public/${bucket}/${fileName}`;
       },
