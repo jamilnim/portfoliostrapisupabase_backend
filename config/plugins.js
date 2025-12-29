@@ -1,8 +1,12 @@
 module.exports = ({ env }) => ({
     upload: {
       config: {
-        provider: 'supabase', // matches your file name without extension
-        providerOptions: {},
+        provider: 'supabase',
+        providerOptions: {
+          supabaseUrl: env('SUPABASE_URL'),
+          supabaseKey: env('SUPABASE_ANON_KEY'),
+          bucket: 'uploads',
+        },
       },
     },
   });
