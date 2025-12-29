@@ -1,10 +1,9 @@
 module.exports = ({ env }) => ({
     upload: {
       config: {
-        provider: 'upload-supabase',
+        provider: 'custom',
         providerOptions: {
-          supabaseUrl: env('SUPABASE_URL'),
-          supabaseServiceRoleKey: env('SUPABASE_SERVICE_ROLE_KEY'),
+          path: './src/providers/upload/supabase.js',
         },
       },
     },
