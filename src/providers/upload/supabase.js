@@ -1,23 +1,16 @@
-"use strict";
+'use strict';
 
 console.log("🔥 SUPABASE UPLOAD PROVIDER LOADED");
+
 const { createClient } = require("@supabase/supabase-js");
 
 module.exports = {
   init({ env }) {
-    const supabase = createClient(
-      env("SUPABASE_URL"),
-      env("SUPABASE_SERVICE_ROLE_KEY")
-    );
+    const supabase = createClient(env("SUPABASE_URL"), env("SUPABASE_SERVICE_ROLE_KEY"));
 
     return {
       async upload(file) {
         console.log("🔥 UPLOADING FILE TO SUPABASE:", file.name);
-        console.log("URL:", process.env.SUPABASE_URL ? "OK" : "MISSING");
-        console.log(
-          "KEY:",
-          process.env.SUPABASE_SERVICE_ROLE_KEY ? "OK" : "MISSING"
-        );
 
         const { error } = await supabase.storage
           .from("uploads")
@@ -28,9 +21,13 @@ module.exports = {
 
         if (error) throw error;
 
-        file.url = `${env(
-          "SUPABASE_URL"
-        )}/storage/v1/object/public/uploads/${file.hash}${file.ext}`;
+        // Return Strapi-compatible object
+        return {
+          url: `${env("SUPABASE_URL")}/storage/v1/object/public/uploads/${file.hash}${file.ext}`,
+          name: file.name,
+          hash: file.hash,
+          ext: file.ext,
+        };
       },
 
       async delete(file) {

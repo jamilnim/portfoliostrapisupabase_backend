@@ -1,9 +1,11 @@
 module.exports = ({ env }) => ({
     upload: {
       config: {
-        provider: 'local',
+        provider: 'supabase', // ✅ must match filename supabase.js
         providerOptions: {
-          path: './src/providers/upload/supabase.js',
+          supabaseUrl: env('SUPABASE_URL'),
+          supabaseKey: env('SUPABASE_SERVICE_ROLE_KEY'),
+          bucketName: 'uploads',
         },
       },
     },
