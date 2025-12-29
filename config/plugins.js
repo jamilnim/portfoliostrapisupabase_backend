@@ -1,13 +1,13 @@
+'use strict';
+
+const path = require('path');
+
 module.exports = ({ env }) => ({
-    upload: {
-      config: {
-        provider: 'supabase', // ✅ must match filename supabase.js
-        providerOptions: {
-          supabaseUrl: env('SUPABASE_URL'),
-          supabaseKey: env('SUPABASE_SERVICE_ROLE_KEY'),
-          bucketName: 'uploads',
-        },
-      },
+  upload: {
+    config: {
+      // Use the local custom provider
+      provider: path.resolve(__dirname, '../src/providers/upload/supabase.js'),
+      providerOptions: {}, // No options needed
     },
-  });
-  
+  },
+});
