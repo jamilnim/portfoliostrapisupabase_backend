@@ -1,17 +1,10 @@
-// path: config/plugins.js
 module.exports = ({ env }) => ({
-    // Upload plugin configuration
     upload: {
-      config: {
-        provider: "local", // ✅ use local storage
-        providerOptions: {
-          sizeLimit: 100000000, // optional, in bytes (100MB here)
-        },
-        actionOptions: {
-          upload: {},
-          uploadStream: {},
-          delete: {},
-        },
+      provider: 'upload-supabase', // your custom provider folder
+      providerOptions: {
+        SUPABASE_URL: env('SUPABASE_URL'),
+        SUPABASE_SERVICE_ROLE_KEY: env('SUPABASE_SERVICE_ROLE_KEY'),
+        bucket: 'strapi-uploads',
       },
     },
   });
