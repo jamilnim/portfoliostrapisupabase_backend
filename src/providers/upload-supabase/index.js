@@ -11,7 +11,7 @@ module.exports = ({ env }) => {
   return {
     upload: async (file) => {
       const { data, error } = await supabase.storage
-        .from('strapi-uploads')
+        .from('uploads')
         .upload(file.name, file.buffer, {
           cacheControl: '3600',
           upsert: true,
@@ -22,13 +22,13 @@ module.exports = ({ env }) => {
 
       // Return Strapi-compatible response
       return {
-        url: `${env('SUPABASE_URL')}/storage/v1/object/public/strapi-uploads/${file.name}`,
+        url: `${env('SUPABASE_URL')}/storage/v1/object/public/uploads/${file.name}`,
       };
     },
 
     delete: async (file) => {
       const { error } = await supabase.storage
-        .from('strapi-uploads')
+        .from('uploads')
         .remove([file.name]);
 
       if (error) throw error;
