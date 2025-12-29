@@ -1,37 +1,48 @@
 'use strict';
 
 const { createClient } = require('@supabase/supabase-js');
+const path = require('path');
 
-module.exports = ({ env }) => {
-  const supabase = createClient(
-    env('SUPABASE_URL'),
-    env('SUPABASE_SERVICE_ROLE_KEY')
-  );
+module.exports = {
+  init(config) {
+    const supabase = createClient(
+      config.supabaseUrl,
+      config.supabaseServiceRoleKey
+    );
 
-  return {
-    upload: async (file) => {
-      const { data, error } = await supabase.storage
-        .from('uploads')
-        .upload(file.name, file.buffer, {
-          cacheControl: '3600',
-          upsert: true,
-          contentType: file.mime
-        });
+    return {
+      async upload(file) {
+        const ext = path.extname(file.name);
+        const filePath = `${Date.now()}-${file.hash}${ext}`;
 
-      if (error) throw error;
+        const { error } = await supabase.storage
+          .from('uploads') // ✅ your bucket name
+          .upload(filePath, file.buffer, {
+            contentType: file.mime,
+            upsert: true,
+          });
 
-      // Return Strapi-compatible response
-      return {
-        url: `${env('SUPABASE_URL')}/storage/v1/object/public/uploads/${file.name}`,
-      };
-    },
+        if (error) {
+          console.error('❌ Supabase upload error:', error);
+          throw error;
+        }
 
-    delete: async (file) => {
-      const { error } = await supabase.storage
-        .from('uploads')
-        .remove([file.name]);
+        // ✅ REQUIRED: mutate file object so Strapi saves it
+        file.url = `${config.supabaseUrl}/storage/v1/object/public/uploads/${filePath}`;
+        file.provider = 'supabase';
+        file.provider_metadata = {
+          bucket: 'uploads',
+          path: filePath,
+        };
+      },
 
-      if (error) throw error;
-    },
-  };
+      async delete(file) {
+        if (!file.provider_metadata?.path) return;
+
+        await supabase.storage
+          .from('uploads')
+          .remove([file.provider_metadata.path]);
+      },
+    };
+  },
 };
