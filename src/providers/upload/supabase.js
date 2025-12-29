@@ -1,5 +1,6 @@
 'use strict';
 
+console.log('🔥 SUPABASE UPLOAD PROVIDER LOADED');
 const { createClient } = require('@supabase/supabase-js');
 
 module.exports = {
@@ -11,6 +12,8 @@ module.exports = {
 
     return {
       async upload(file) {
+        console.log('🔥 UPLOADING FILE TO SUPABASE:', file.name);
+
         const { error } = await supabase.storage
           .from('uploads')
           .upload(file.hash + file.ext, file.buffer, {
