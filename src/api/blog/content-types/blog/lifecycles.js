@@ -1,44 +1,39 @@
+'use strict';
+
+/**
+ * Lifecycle hooks for Blog content type
+ * Automatically copies media URLs to text fields:
+ *  - mainImage → mainImageUrl
+ *  - subImage → subImageUrl
+ * This works on create and update.
+ */
+
 module.exports = {
-    async beforeCreate(event) {
-      await syncImageUrls(event);
-    },
-  
-    async beforeUpdate(event) {
-      await syncImageUrls(event);
-    },
-  };
-  
-  async function syncImageUrls(event) {
-    const data = event.params.data;
-  
-    // MAIN IMAGE
-    if (data.mainImage?.connect?.length) {
-      const fileId = data.mainImage.connect[0].id;
-  
-      const file = await strapi.db
-        .query('plugin::upload.file')
-        .findOne({ where: { id: fileId } });
-  
-      if (file?.url) {
-        data.mainImageUrl = file.url.startsWith('http')
-          ? file.url
-          : `${strapi.config.get('server.url')}${file.url}`;
-      }
+  async beforeCreate(event) {
+    const { data } = event.params;
+
+    // Copy mainImage URL if exists
+    if (data.mainImage && data.mainImage.url) {
+      data.mainImageUrl = data.mainImage.url;
     }
-  
-    // SUB IMAGE
-    if (data.subImage?.connect?.length) {
-      const fileId = data.subImage.connect[0].id;
-  
-      const file = await strapi.db
-        .query('plugin::upload.file')
-        .findOne({ where: { id: fileId } });
-  
-      if (file?.url) {
-        data.subImageUrl = file.url.startsWith('http')
-          ? file.url
-          : `${strapi.config.get('server.url')}${file.url}`;
-      }
+
+    // Copy subImage URL if exists
+    if (data.subImage && data.subImage.url) {
+      data.subImageUrl = data.subImage.url;
     }
-  }
-  
+  },
+
+  async beforeUpdate(event) {
+    const { data } = event.params;
+
+    // Update mainImageUrl if mainImage changed
+    if (data.mainImage && data.mainImage.url) {
+      data.mainImageUrl = data.mainImage.url;
+    }
+
+    // Update subImageUrl if subImage changed
+    if (data.subImage && data.subImage.url) {
+      data.subImageUrl = data.subImage.url;
+    }
+  },
+};
