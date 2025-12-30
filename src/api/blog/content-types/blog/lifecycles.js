@@ -1,39 +1,59 @@
 'use strict';
 
-/**
- * Lifecycle hooks for Blog content type
- * Automatically copies media URLs to text fields:
- *  - mainImage → mainImageUrl
- *  - subImage → subImageUrl
- * This works on create and update.
- */
-
 module.exports = {
   async beforeCreate(event) {
     const { data } = event.params;
 
-    // Copy mainImage URL if exists
-    if (data.mainImage && data.mainImage.url) {
-      data.mainImageUrl = data.mainImage.url;
+    // Handle mainImage
+    if (data.mainImage) {
+      const main = Array.isArray(data.mainImage) ? data.mainImage[0] : data.mainImage;
+      if (main?.url) {
+        data.mainImageUrl = main.url.startsWith('http')
+          ? main.url
+          : process.env.PUBLIC_URL + main.url;
+      } else if (main?.provider_metadata?.publicUrl) {
+        data.mainImageUrl = main.provider_metadata.publicUrl;
+      }
     }
 
-    // Copy subImage URL if exists
-    if (data.subImage && data.subImage.url) {
-      data.subImageUrl = data.subImage.url;
+    // Handle subImage
+    if (data.subImage) {
+      const sub = Array.isArray(data.subImage) ? data.subImage[0] : data.subImage;
+      if (sub?.url) {
+        data.subImageUrl = sub.url.startsWith('http')
+          ? sub.url
+          : process.env.PUBLIC_URL + sub.url;
+      } else if (sub?.provider_metadata?.publicUrl) {
+        data.subImageUrl = sub.provider_metadata.publicUrl;
+      }
     }
   },
 
   async beforeUpdate(event) {
     const { data } = event.params;
 
-    // Update mainImageUrl if mainImage changed
-    if (data.mainImage && data.mainImage.url) {
-      data.mainImageUrl = data.mainImage.url;
+    // Handle mainImage
+    if (data.mainImage) {
+      const main = Array.isArray(data.mainImage) ? data.mainImage[0] : data.mainImage;
+      if (main?.url) {
+        data.mainImageUrl = main.url.startsWith('http')
+          ? main.url
+          : process.env.PUBLIC_URL + main.url;
+      } else if (main?.provider_metadata?.publicUrl) {
+        data.mainImageUrl = main.provider_metadata.publicUrl;
+      }
     }
 
-    // Update subImageUrl if subImage changed
-    if (data.subImage && data.subImage.url) {
-      data.subImageUrl = data.subImage.url;
+    // Handle subImage
+    if (data.subImage) {
+      const sub = Array.isArray(data.subImage) ? data.subImage[0] : data.subImage;
+      if (sub?.url) {
+        data.subImageUrl = sub.url.startsWith('http')
+          ? sub.url
+          : process.env.PUBLIC_URL + sub.url;
+      } else if (sub?.provider_metadata?.publicUrl) {
+        data.subImageUrl = sub.provider_metadata.publicUrl;
+      }
     }
   },
 };
